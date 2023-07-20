@@ -1,0 +1,23 @@
+{
+  "name": "mobileweb",
+  "version": "1.0.0",
+  "description": "a website for saling mobile phone",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js",
+    "start:prod": "SET NODE_ENV=production & nodemon server.js"
+  },
+  "author": "xich top",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.1",
+    "mongoose": "^7.3.4",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.0.0",
+    "validator": "^13.9.0"
+  }
+}
