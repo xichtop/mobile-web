@@ -15,6 +15,7 @@ exports.signUp = catchAsyncFn(async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
+    role: req.body.role
   });
 
   const token = generateToken(user._id);
@@ -73,6 +74,15 @@ exports.protect = catchAsyncFn(async (req, res, next) => {
     return next(new AppError('Your password has changed since you last logged in', 401));
   }
 
-  req.user = user;
+  req.user = user; //patch user to the next middleware for authorization
   next();
 });
+
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError('You are not authorized to access this route', 403));
+    }
+    next();
+  }
+}
