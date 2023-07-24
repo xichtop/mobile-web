@@ -36,21 +36,32 @@ const userSchema = mongoose.Schema({
     type: String,
     select: false
   },
-  passwordResetExpires: Date
+  passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
+  }
 })
 
+// Middleware for password hashing
 userSchema.pre('save', async function(next) {
-  // Run this function when password is actually modified
   if (!this.isModified('password')) return next();
 
   this.password = await bcrypt.hash(this.password, 12);
 })
 
+// Middleware for password changing
 userSchema.pre('save', async function(next) {
-  // Run this function when password is actually modified
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
+})
+
+// Middleware for getting active users
+userSchema.pre(/^find/, function(next) {
+  this.find({ active: { $ne: false }});
+  next();
 })
 
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {

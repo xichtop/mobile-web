@@ -3,6 +3,16 @@ const APIFeatures = require('../utils/APIFeatures');
 const catchAsyncFn = require('../utils/catchAsyncFn');
 const AppError = require('../utils/appError');
 
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach(el => {
+    if (allowedFields.includes(el)) {
+      newObj[el] = obj[el]
+    }
+  });
+  return newObj;
+}
+
 // Function start
 exports.getUsers = catchAsyncFn(async (req, res, next) => {
   const length = await User.countDocuments();
@@ -45,12 +55,17 @@ exports.getUser = catchAsyncFn(async (req, res, next) => {
 });
 
 exports.updateUser = catchAsyncFn(async (req, res, next) => {
-  const id = req.params.id;
-  const newUser = await User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
-  if (!newUser) {
-    const message = `Can not find user with id: ${id}`;
-    return next(new AppError(message, 404));
+  if (req.body.password) {
+    return next(new AppError('This route is not for password update.', 400))
   }
+
+  if (req.body.role) {
+    return next(new AppError('This route is not for role update.', 400))
+  }
+
+  const filteredBody = filterObj(req.body, 'name', 'email', 'photo');
+
+  const newUser = await User.findByIdAndUpdate(req.user._id, filteredBody, { new: true, runValidators: true });
   
   res
     .status(200)
@@ -61,12 +76,9 @@ exports.updateUser = catchAsyncFn(async (req, res, next) => {
 })
 
 exports.deleteUser = catchAsyncFn(async (req, res, next) => {
-  const user = await User.findByIdAndDelete(req.params.id);
-  if (!user) {
-    const message = `Can not find user with id: ${id}`;
-    return next(new AppError(message, 404));
-  }
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+
   res.status(200).json({
-    status: 'successful'
-  });
+    status: 'successful',
+  })
 })
