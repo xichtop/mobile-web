@@ -12,6 +12,16 @@ const generateToken = id => {
   });
 }
 
+const createAndSendToken = (user, statusCode, res) => {
+  const token = generateToken(user._id);
+  res.status(statusCode).json({
+    status:'success',
+    data: {
+      token
+    },
+  });
+}
+
 exports.signUp = catchAsyncFn(async (req, res, next) => {
   const user = await User.create({
     name: req.body.name,
@@ -20,13 +30,7 @@ exports.signUp = catchAsyncFn(async (req, res, next) => {
     role: req.body.role
   });
 
-  const token = generateToken(user._id);
-  res.status(201).json({
-    status:'success',
-    data: {
-      token
-    },
-  });
+  createAndSendToken(user, 201, res);
 });
 
 exports.logIn = catchAsyncFn(async (req, res, next) => {
@@ -42,13 +46,7 @@ exports.logIn = catchAsyncFn(async (req, res, next) => {
   }
   delete user.password;
 
-  const token = generateToken(user._id);
-  res.status(200).json({
-    status:'success',
-    data: {
-      token
-    }
-  });
+  createAndSendToken(user, 200, res);
 });
 
 exports.protect = catchAsyncFn(async (req, res, next) => {
@@ -136,11 +134,20 @@ exports.resetPassword = catchAsyncFn(async (req, res, next) => {
 
   delete user.password;
 
-  const token = generateToken(user._id);
-  res.status(200).json({
-    status:'success',
-    data: {
-      token
-    }
-  });
+  createAndSendToken(user, 201, res);
+})
+
+exports.updatePassword = catchAsyncFn(async (req, res, next) => {
+  const user = await User.findById(req.user._id).select('+password');
+  
+  if (!await user.correctPassword(req.body.currentPassword, user.password)) {
+    return next(new AppError('Your current password is wrong.', 401));
+  }
+
+  user.password = req.body.password;
+  await user.save();
+
+  delete user.password;
+
+  createAndSendToken(user, 201, res);
 })
