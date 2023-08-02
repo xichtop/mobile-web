@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+const helmet = require('helmet');
 const { rateLimit, MemoryStore } = require('express-rate-limit');
 
 const productRouter = require('./src/routes/productRoutes');
@@ -12,6 +13,9 @@ const globalErrorHandler = require('./src/controllers/errorController');
 const app = express();
 
 // 1. Middleware
+
+app.use(helmet());
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
