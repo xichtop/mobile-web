@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const { rateLimit, MemoryStore } = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
 
 const productRouter = require('./src/routes/productRoutes');
 const userRouter = require('./src/routes/userRoutes');
@@ -30,7 +31,11 @@ const apiLimiter = rateLimit({
 app.use('/api/v1', apiLimiter);
 
 //middleware to make req body into json // make body request not undefined
-app.use(express.json()); 
+app.use(express.json({
+  replaceWith: '_',
+})); 
+
+app.use(mongoSanitize());
 
 // 2. Route
 app.use('/api/v1/products', productRouter);
