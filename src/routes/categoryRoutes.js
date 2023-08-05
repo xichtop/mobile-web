@@ -6,12 +6,12 @@ const authController = require('../controllers/authController');
 router
   .route('/')
   .get(categoryController.getCategories)
-  .post(categoryController.createCategory);
+  .post(authController.protect, authController.restrictTo('admin'), categoryController.createCategory);
 
 router
   .route('/:id')
   .get(categoryController.getCategory)
-  .patch(categoryController.updateCategory)
+  .patch(authController.protect, authController.restrictTo('admin'), categoryController.updateCategory)
   .delete(authController.protect, authController.restrictTo('admin'), categoryController.deleteCategory);
 
 

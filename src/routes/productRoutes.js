@@ -7,22 +7,22 @@ const reviewRoutes = require('../routes/reviewRoutes');
 // router.param('id', productController.checkID);
 
 router
-  .route('/top-sold').get(authController.protect, productController.aliasTopProduct, productController.getProducts);
+  .route('/top-sold').get(productController.aliasTopProduct, productController.getProducts);
 
 router
- .route('/get-by-group').get(authController.protect, productController.getProductGroup);
+ .route('/get-by-group').get(productController.getProductGroup);
 router
  .route('/get-by-color').get(productController.getProductColor);
 
 router
   .route('/')
   .get(productController.getProducts)
-  .post(productController.createProduct);
+  .post(authController.protect, authController.restrictTo('admin'), productController.createProduct);
 
 router
   .route('/:id')
   .get(productController.getProduct)
-  .patch(productController.updateProduct)
+  .patch(authController.protect, authController.restrictTo('admin'), productController.updateProduct)
   .delete(authController.protect, authController.restrictTo('admin'), productController.deleteProduct);
 
 router.use('/:productId/reviews', reviewRoutes);

@@ -1,7 +1,7 @@
 const User = require('../models/user');
-const APIFeatures = require('../utils/APIFeatures');
 const catchAsyncFn = require('../utils/catchAsyncFn');
 const AppError = require('../utils/appError');
+const handlerFactory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -13,48 +13,11 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 }
 
-// Function start
-exports.getUsers = catchAsyncFn(async (req, res, next) => {
-  const length = await User.countDocuments();
-  const features = new APIFeatures(User.find(), req.query, length)
-    .doFilter()
-    .doSort()
-    .limitField()
-    .doPaginate();
-  const users = await features.query;
-  res
-    .status(200)
-    .json({
-      status: 'successful',
-      length: users.length,
-      data: users
-    })
-});
-
 exports.createUser = catchAsyncFn(async (req, res, next) => {
-  const newUser = await User.create(req.body);
-  res
-    .status(200)
-    .json({
-      status: 'successful',
-      data: newUser
-    });
+  return next(new AppError('This route is not for create user. Please user auth/signup.', 400))
 });
 
-exports.getUser = catchAsyncFn(async (req, res, next) => {
-  const id = req.params.id;
-  const user = await User.findById(id);
-  if (!user) {
-    const message = `Can not find user with id: ${id}`;
-    return next(new AppError(message, 404));
-  }
-  res.status(200).json({
-    status: 'successful',
-    data: user
-  })
-});
-
-exports.updateUser = catchAsyncFn(async (req, res, next) => {
+exports.updateMe = catchAsyncFn(async (req, res, next) => {
   if (req.body.password) {
     return next(new AppError('This route is not for password update.', 400))
   }
@@ -64,9 +27,8 @@ exports.updateUser = catchAsyncFn(async (req, res, next) => {
   }
 
   const filteredBody = filterObj(req.body, 'name', 'email', 'photo');
-
   const newUser = await User.findByIdAndUpdate(req.user._id, filteredBody, { new: true, runValidators: true });
-  
+
   res
     .status(200)
     .json({
@@ -75,10 +37,15 @@ exports.updateUser = catchAsyncFn(async (req, res, next) => {
     });
 })
 
-exports.deleteUser = catchAsyncFn(async (req, res, next) => {
+exports.deleteMe = catchAsyncFn(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
 
   res.status(200).json({
     status: 'successful',
   })
 })
+
+exports.getUsers = handlerFactory.getAll(User);
+exports.getUser = handlerFactory.getOne(User);
+exports.deleteUser = handlerFactory.deleteOne(User);
+exports.updateUser = handlerFactory.updateOne(User);

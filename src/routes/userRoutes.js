@@ -5,17 +5,17 @@ const authController = require('../controllers/authController');
 
 router
   .route('/')
-  .get(authController.protect,  userController.getUsers)
+  .get(authController.protect, authController.restrictTo('admin'), userController.getUsers)
   .post(userController.createUser);
 
-router.patch('/update-me', authController.protect, userController.updateUser);
-router.delete('/delete-me', authController.protect, userController.deleteUser);
+router.patch('/update-me', authController.protect, userController.updateMe);
+router.delete('/delete-me', authController.protect, userController.deleteMe);
 
 router
   .route('/:id')
   .get(authController.protect, userController.getUser)
-  // .patch(userController.updateUser)
-  // .delete(userController.deleteUser);
+  .patch(authController.protect, userController.updateUser)
+  .delete(authController.protect, authController.restrictTo('admin'), userController.deleteUser);
 
 
 module.exports = router;
