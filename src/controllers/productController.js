@@ -39,7 +39,7 @@ exports.createProduct = catchAsyncFn(async (req, res, next) => {
 
 exports.getProduct = catchAsyncFn(async (req, res, next) => {
   const id = req.params.id;
-  const product = await Product.findById(id);
+  const product = await Product.findById(id).populate("reviews");
   if (!product) {
     const message = `Can not find product with id: ${id}`;
     return next(new AppError(message, 404));

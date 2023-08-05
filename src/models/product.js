@@ -24,21 +24,62 @@ const productSchema = new mongoose.Schema({
     default: 1,
     min: 0
   },
+  price: {
+    type: Number,
+    required: [true, 'Product must have a price'],
+    min: 0
+  },
+  discountPercent: {
+    type: Number,
+    default: 0
+  },
   colors: [{
     color: String,
     price: Number,
-    urlPicture: String
+    urlPicture: [String]
+  }],
+  sizes: [{
+    size: String,
+    price: Number
   }],
   ratingAverage: {
     type: Number,
-    default: 4.5,
-    min: 0,
+    default: 5,
+    min: 1,
     max: 5
   },
   ratingQuantity: {
     type: Number,
     default: 0,
     min: 0
+  },
+  pin: {
+    capacity: String,
+    chargeTime: String,
+    typePin: String,
+    chargeSupports: String,
+  },
+  screen: {
+    technology: String,
+    size: String,
+    resolution: String
+  },
+  configuration: {
+    rom: String,
+    ram: String,
+    cpu: String,
+    system: String
+  },
+  connection: {
+    connect: [String],
+    network: [String],
+    sim: [String],
+    others: [String]
+  },
+  otherInfo: {
+    from: String,
+    langguage: String,
+    release: String,
   },
   createAt: {
     type: Date,
@@ -52,7 +93,26 @@ const productSchema = new mongoose.Schema({
   status: {
     type: Boolean,
     default: true
+  },
+  category: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Category'
   }
+}, 
+{
+  toJSON: {virtuals: true},
+  toObject: {virtuals: true}
+})
+
+// Virtual Populate
+productSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'product',
+  localField: '_id'
+})
+
+productSchema.pre('save', async function(next) {
+  this.modifyAt = Date.now() - 1000;
 })
 
 const Product = mongoose.model('Product', productSchema);

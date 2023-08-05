@@ -38,6 +38,7 @@ exports.signUp = catchAsyncFn(async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
+    photo: req.body.photo,
     role: req.body.role
   });
 
