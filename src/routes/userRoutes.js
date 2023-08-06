@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
+const orderRoutes = require('../routes/orderRoutes');
 
 router
   .route('/')
@@ -17,5 +18,6 @@ router
   .patch(authController.protect, userController.updateUser)
   .delete(authController.protect, authController.restrictTo('admin'), userController.deleteUser);
 
+router.use('/:userId/orders', orderRoutes);
 
 module.exports = router;

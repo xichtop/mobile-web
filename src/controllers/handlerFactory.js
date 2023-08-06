@@ -57,8 +57,10 @@ exports.getAll = Model => catchAsyncFn(async (req, res, next) => {
 
   // To allow nested GET
   let filter = {};
-  if (req.params.productId) filter = { product: req.params.productId};
-  if (req.params.categoryId) filter = { category: req.params.categoryId};
+  if (req.params.categoryId) filter = { category: req.params.categoryId };
+  if (req.params.productId) filter = { product: req.params.productId };
+  if (req.params.userId) filter = { user: req.params.userId };
+  if (req.params.orderId) filter = { order: req.params.orderId} ;
 
   const length = await Model.countDocuments();
   const features = new APIFeatures(Model.find(filter), req.query, length)

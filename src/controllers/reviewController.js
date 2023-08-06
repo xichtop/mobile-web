@@ -13,5 +13,6 @@ exports.getProductAndUserId = (req, res, next) => {
 
 exports.getReviews = handlerFactory.getAll(Review);
 exports.createReview = handlerFactory.createOne(Review);
+exports.getReview = handlerFactory.getOne(Review);
 exports.updateReview = handlerFactory.updateOne(Review);
 exports.deleteReview = handlerFactory.deleteOne(Review);
