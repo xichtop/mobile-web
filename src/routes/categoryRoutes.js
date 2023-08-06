@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const categoryController = require('../controllers/categoryController');
 const authController = require('../controllers/authController');
+const productRoutes = require('./productRoutes');
 
 router
   .route('/')
@@ -14,5 +15,6 @@ router
   .patch(authController.protect, authController.restrictTo('admin'), categoryController.updateCategory)
   .delete(authController.protect, authController.restrictTo('admin'), categoryController.deleteCategory);
 
+  router.use('/:categoryId/products', productRoutes);
 
 module.exports = router;

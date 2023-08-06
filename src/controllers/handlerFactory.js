@@ -55,9 +55,10 @@ exports.getOne = (Model, populateOptions) => catchAsyncFn(async (req, res, next)
 
 exports.getAll = Model => catchAsyncFn(async (req, res, next) => {
 
-  // To allow nested GET reviews on product
+  // To allow nested GET
   let filter = {};
   if (req.params.productId) filter = { product: req.params.productId};
+  if (req.params.categoryId) filter = { category: req.params.categoryId};
 
   const length = await Model.countDocuments();
   const features = new APIFeatures(Model.find(filter), req.query, length)

@@ -1,8 +1,9 @@
 const express = require('express');
-const router = express.Router();
 const productController = require('../controllers/productController');
 const authController = require('../controllers/authController');
 const reviewRoutes = require('../routes/reviewRoutes');
+
+const router = express.Router({ mergeParams: true});
 
 // router.param('id', productController.checkID);
 

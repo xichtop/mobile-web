@@ -46,7 +46,8 @@ const productSchema = new mongoose.Schema({
     type: Number,
     default: 5,
     min: 1,
-    max: 5
+    max: 5,
+    set: val => Math.round(val * 2) / 2
   },
   ratingQuantity: {
     type: Number,
@@ -83,12 +84,12 @@ const productSchema = new mongoose.Schema({
   },
   createAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
     select: false
   },
   modifyAt: {
     type: Date,
-    default: Date.now()
+    default: Date.now
   },
   status: {
     type: Boolean,
@@ -103,6 +104,9 @@ const productSchema = new mongoose.Schema({
   toJSON: {virtuals: true},
   toObject: {virtuals: true}
 })
+
+// Indexes to improve reading performance
+productSchema.index({ price: 1, ratingAverage: -1});
 
 // Virtual Populate
 productSchema.virtual('reviews', {
