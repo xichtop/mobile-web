@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 const orderRoutes = require('../routes/orderRoutes');
+const cartRoutes = require('../routes/cartRoutes');
 
 router
   .route('/')
@@ -19,5 +20,6 @@ router
   .delete(authController.protect, authController.restrictTo('admin'), userController.deleteUser);
 
 router.use('/:userId/orders', orderRoutes);
+router.use('/:userId/carts', cartRoutes);
 
 module.exports = router;
