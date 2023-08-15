@@ -45,6 +45,16 @@ exports.deleteMe = catchAsyncFn(async (req, res, next) => {
   })
 })
 
+exports.getMe = catchAsyncFn(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  res
+    .status(200)
+    .json({
+      status: 'successful',
+      data: user
+    });
+});
+
 exports.getUsers = handlerFactory.getAll(User);
 exports.getUser = handlerFactory.getOne(User);
 exports.deleteUser = handlerFactory.deleteOne(User);

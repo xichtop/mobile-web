@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
+var cors = require('cors')
 const { rateLimit, MemoryStore } = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 
@@ -24,6 +25,8 @@ app.use(helmet());
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+app.use(cors());
 
 const apiLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes
