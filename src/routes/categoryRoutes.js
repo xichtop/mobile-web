@@ -4,6 +4,8 @@ const categoryController = require('../controllers/categoryController');
 const authController = require('../controllers/authController');
 const productRoutes = require('./productRoutes');
 
+router.get('/get-by-code/:sortCode', categoryController.getCategoryBySortCode);
+
 router
   .route('/')
   .get(categoryController.getCategories)

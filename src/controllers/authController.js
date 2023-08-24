@@ -28,7 +28,7 @@ const createAndSendToken = (user, statusCode, res) => {
     status:'success',
     data: {
       token,
-      user
+      expiresIn: 3600
     },
   });
 }

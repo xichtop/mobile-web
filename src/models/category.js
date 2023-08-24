@@ -2,13 +2,17 @@ const mongoose = require('mongoose');
 
 const categorySchema = new mongoose.Schema({
   sortCode: {
-    type: 'String',
+    type: String,
     required: [true, 'Category must have a short code!'],
     unique: [true, 'Shortcode must be unique!']
   },
   description: {
-    type: 'String',
+    type: String,
     required: [true, 'Category must have a description!'],
+  },
+  urlPicture: {
+    type: String,
+    required: [true, 'Category must have a picture!']
   }
 })
 
