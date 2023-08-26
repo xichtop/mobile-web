@@ -62,18 +62,26 @@ exports.getAll = Model => catchAsyncFn(async (req, res, next) => {
   if (req.params.userId) filter = { user: req.params.userId };
   if (req.params.orderId) filter = { order: req.params.orderId} ;
 
+  // Get Length for pagination
   const length = await Model.countDocuments();
-  const features = new APIFeatures(Model.find(filter), req.query, length)
+  const tempQuery = new APIFeatures(Model.find(filter), req.query, length)
     .doFilter()
     .doSort()
-    .limitField()
-    .doPaginate();
+    .limitField();
+  const lengthQuery = await tempQuery.query;
+
+  // Get all items
+  const features = new APIFeatures(Model.find(filter), req.query, length)
+  .doFilter()
+  .doSort()
+  .limitField()
+  .doPaginate();
   const documents = await features.query;
   res
     .status(200)
     .json({
       status: 'successful',
-      length: documents.length,
+      length: lengthQuery.length,
       data: documents
     })
 });

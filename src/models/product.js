@@ -115,6 +115,10 @@ productSchema.virtual('reviews', {
   localField: '_id'
 })
 
+productSchema.virtual('currentPrice').get(function () {
+  return this.price - this.price * this.discountPercent / 100;
+})
+
 productSchema.pre('save', async function(next) {
   this.modifyAt = Date.now() - 1000;
 })
