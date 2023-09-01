@@ -33,6 +33,10 @@ const productSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  currentPrice: {
+    type: Number,
+    default: 0
+  },
   colors: [{
     color: String,
     price: Number,
@@ -115,12 +119,37 @@ productSchema.virtual('reviews', {
   localField: '_id'
 })
 
-productSchema.virtual('currentPrice').get(function () {
-  return this.price - this.price * this.discountPercent / 100;
+productSchema.pre('save', async function(next) {
+  this.modifyAt = Date.now() - 1000;
 })
 
 productSchema.pre('save', async function(next) {
-  this.modifyAt = Date.now() - 1000;
+  this.currentPrice = this.price - (this.price * this.discountPercent) / 100;
+})
+
+productSchema.pre('findOneAndUpdate', async function(next) {
+  const updateField =this.getUpdate();
+  let price = 0, discount = 0;
+  if (updateField.hasOwnProperty('discountPercent') && updateField.hasOwnProperty('price')) {
+    price = updateField.price;
+    discount = updateField.discountPercent;
+    const currentPrice = price - (price * discount) / 100;
+    this.set('currentPrice', currentPrice);
+  } else if (updateField.hasOwnProperty('discountPercent')){
+    const docToUpdate = await this.model.findOne(this.getQuery());
+    price = docToUpdate.price;
+    discount = updateField.discountPercent;
+    const currentPrice = price - (price * discount) / 100;
+    this.set('currentPrice', currentPrice);
+  } else if (updateField.hasOwnProperty('price')) {
+    const docToUpdate = await this.model.findOne(this.getQuery());
+    price = updateField.price;
+    discount = docToUpdate.discountPercent;
+    const currentPrice = price - (price * discount) / 100;
+    this.set('currentPrice', currentPrice);
+  } else {
+    next();
+  }
 })
 
 const Product = mongoose.model('Product', productSchema);
