@@ -22,17 +22,13 @@ const cartSchema = new mongoose.Schema({
   quantity: {
     type: Number,
     default: 1
-  },
-  price: {
-    type: Number,
-    required: [true, 'Cart must have a price.'] 
   }
 })
 
 cartSchema.pre(/^find/, function(next) {
   this.populate({
     path: "product",
-    select: "urlPicture"
+    select: ["urlPicture", "colors", "sizes", "price", "title"]
   });
   next();
 })

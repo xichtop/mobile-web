@@ -11,7 +11,7 @@ const authRouter = require('./src/routes/authRoutes');
 const categoryRouter = require('./src/routes/categoryRoutes');
 const reviewRouter = require('./src/routes/reviewRoutes');
 const orderRouter = require('./src/routes/orderRoutes');
-const orderDetailRouter = require('./src/routes/orderDetailRoutes');
+const cartRouter = require('./src/routes/cartRoutes');
 
 const AppError = require('./src/utils/appError');
 const globalErrorHandler = require('./src/controllers/errorController');
@@ -51,6 +51,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/orders', orderRouter);
+app.use('/api/v1/carts', cartRouter);
 // app.use('/api/v1/order-details', orderDetailRouter);
 
 // return error when call to unknown route

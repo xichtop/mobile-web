@@ -70,7 +70,6 @@ const productSchema = new mongoose.Schema({
     resolution: String
   },
   configuration: {
-    rom: String,
     ram: String,
     cpu: String,
     system: String
