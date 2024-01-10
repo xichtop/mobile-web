@@ -111,6 +111,8 @@ const productSchema = new mongoose.Schema({
 // Indexes to improve reading performance
 productSchema.index({ price: 1, ratingAverage: -1});
 
+productSchema.index({title: 'text', 'sizes.size': 'text', 'colors.color': 'text'});
+
 // Virtual Populate
 productSchema.virtual('reviews', {
   ref: 'Review',

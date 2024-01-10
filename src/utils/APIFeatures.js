@@ -7,12 +7,17 @@ class APIFeatures {
 
   doFilter() {
     const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    if (this.queryString.hasOwnProperty('search')) {
+      this.query = this.query.find({$text: {$search: this.queryString.search}});
+    }
+
+    const excludedFields = ['page', 'sort', 'limit', 'fields', 'search'];
     excludedFields.forEach(el => delete queryObj[el]);
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`); //Aggregation
     queryStr = queryStr.replaceAll("'", '.'); // To fix can not using url encode for . character
     this.query = this.query.find(JSON.parse(queryStr));
+    
     return this;
   }
 
